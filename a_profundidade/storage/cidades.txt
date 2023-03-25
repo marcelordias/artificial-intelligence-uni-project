@@ -1,0 +1,13 @@
+Aveiro,Porto,68,Viseu,95,Coimbra,68,Leiria,115
+Braga,Viana do Castelo,48,Vila Real,106,Porto,53
+Bragança,Vila Real,137,Guarda,202
+Beja,Evora,78,Faro,152,Setubal,142
+Castelo Branco,Coimbra,106,Guarda,106,Portalegre,80,Evora,203
+Coimbra,Viseu,96,Leiria,67
+Evora,Lisboa,105,Santarem,117,Portalegre,131,Setubal,103
+Faro,Setubal,249,Lisboa,299
+Guarda,Vila Real,157,Viseu,85
+Leiria,Lisboa,129,Santarem,70
+Lisboa,Santarem,78,Setubal,50
+Porto,Viana do Castelo,71,Vila Real,116,Viseu,133
+Vila Real,Viseu,110
