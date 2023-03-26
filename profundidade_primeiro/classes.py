@@ -13,35 +13,46 @@ class Map:
             print('\t>> \'{}\''.format(
                 city.name))
 
-    def find_path(self, source, destination):
+    def get_path(self, source, destination):
         path = []
         visited = []
-        path.append(Neighbor(source, 0))
+        path_cost = 0
+        if source == destination:
+            print('>> You already are in \'{}\''.format(source.name))
+            return path
         visited.append(source)
-        path = self.recursive_find_path(
+        path = self.recursive_get_path(
             source, destination, path, visited)
+        print('>> From \'{}\' to \'{}\' path:'.format(path[0].source.name, path[-1].city.name))
+        for i in path:
+          print('\t>> From \'{}\' to \'{}\' has a cost of {}'.format(i.source.name, i.city.name, i.cost))
+          path_cost += i.cost
+        print('\t-----------')
+        print('\t>> From \'{}\' to \'{}\' has a total cost of {}'.format(path[0].source.name, path[-1].city.name, path_cost))
         return path
 
-    def recursive_find_path(self, source, destination, path, visited):
+    def recursive_get_path(self, source, destination, path, visited):
         if source == destination:
             return path
         visited.append(source)
         for neighbor in source.neighbors:
             if neighbor.city not in visited:
-                path.append(Neighbor(neighbor.city, neighbor.cost))
+                path.append(Neighbor(neighbor.city, neighbor.cost, source))
                 if neighbor.city == destination:
                     return path
-                path = self.recursive_find_path(
+                self.recursive_get_path(
                     neighbor.city, destination, path, visited)
                 if path[-1].city == destination:
                     return path
                 path.pop()
         return path
 
+
 class Neighbor:
-    def __init__(self, city, cost):
+    def __init__(self, city, cost, source=None):
         self.city = city
         self.cost = cost
+        self.source = source
 
 
 class City:

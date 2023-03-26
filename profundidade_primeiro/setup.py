@@ -87,5 +87,5 @@ porto.add_neighbor(viseu, 133)
 
 vila.add_neighbor(viseu, 110)
 
-for i in portugal.find_path(porto, castelo):
-    print(i.city.name)
+total_cost = 0
+path = portugal.get_path(braganca, viseu)
