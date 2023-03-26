@@ -13,6 +13,5 @@ class City:
     def add_neighbor(self, city, cost):
         self.push(city, cost)
         print('Cidade {} adicionada como vizinha de {}'.format(city.name, self.name)) if Config.TESTING else None
-        # city.push(self, cost)
         city.push(self, cost)        
         print('Cidade {} adicionada como vizinha de {}'.format(self.name, city.name)) if Config.TESTING else None
