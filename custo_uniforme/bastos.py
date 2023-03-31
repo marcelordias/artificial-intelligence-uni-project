@@ -38,5 +38,5 @@ graph = {
     'Viseu': {'Aveiro': 95, 'Guarda': 85, 'Vila Real': 110, 'Coimbra': 96}
 }
 
-# path = uniform_cost_search(start_city, goal_city, graph)
-# print(path)
+path = uniform_cost_search(start_city, goal_city, graph)
+print(path)

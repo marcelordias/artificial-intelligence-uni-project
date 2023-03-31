@@ -16,12 +16,13 @@ graph = {
     'Leiria': {'Lisboa': 129, 'Santarém': 70, 'Aveiro': 115, 'Coimbra': 67},
     'Lisboa': {'Santarém': 78, 'Setúbal': 50, 'Leiria': 129, 'Évora': 150, 'Faro': 299},
     'Porto': {'Viana do Castelo': 71, 'Braga': 53, 'Aveiro': 68},
-    'Portalegre': {"Évora":131,"Castelo Branco":80},
-    'Santarém': {"Lisboa":78,"Évora":117,"Leiria":70},
+    'Portalegre': {"Évora": 131, "Castelo Branco": 80},
+    'Santarém': {"Lisboa": 78, "Évora": 117, "Leiria": 70},
     'Vila Real': {'Viseu': 110, 'Braga': 106, 'Bragança': 137, 'Guarda': 157},
     'Viana do Castelo': {'Porto': 71, 'Braga': 48},
     'Viseu': {'Aveiro': 95, 'Guarda': 85, 'Vila Real': 110, 'Coimbra': 96}
 }
+
 
 class Map:
     def __init__(self, name):
@@ -37,6 +38,11 @@ class Map:
         for city in self.cities:
             print('\t>> \'{}\''.format(
                 city.name))
+            
+    def get_city_by_name(self, name):
+        for city in self.cities:
+            if city.name == name:
+                return city
 
     def get_path(self, source, destination):
         path = []
@@ -48,12 +54,15 @@ class Map:
         visited.append(source)
         path = self.recursive_get_path(
             source, destination, path, visited)
-        print('>> From \'{}\' to \'{}\' path:'.format(path[0].source.name, path[-1].city.name))
+        print('>> From \'{}\' to \'{}\' path:'.format(
+            path[0].source.name, path[-1].city.name))
         for i in path:
-          print('\t>> From \'{}\' to \'{}\' has a cost of {}'.format(i.source.name, i.city.name, i.cost))
-          path_cost += i.cost
+            print('\t>> From \'{}\' to \'{}\' has a cost of {}'.format(
+                i.source.name, i.city.name, i.cost))
+            path_cost += i.cost
         print('\t-----------')
-        print('\t>> From \'{}\' to \'{}\' has a total cost of {}'.format(path[0].source.name, path[-1].city.name, path_cost))
+        print('\t>> From \'{}\' to \'{}\' has a total cost of {}'.format(
+            path[0].source.name, path[-1].city.name, path_cost))
         return path
 
     def recursive_get_path(self, source, destination, path, visited):
@@ -71,23 +80,46 @@ class Map:
                     return path
                 path.pop()
         return path
-    
-    def uniform_cost_search(self, source, destination):
-        frontier = [(0, source, [])]  # list with (cost, city, path) tuples
 
-        visited = []
+    def uniform_cost_search(self, start_city, goal_city):
+        source = start_city.name
+        viz = ""
+        cid = ""
+        goal_cid = ""
+        total_cost = 0
+        frontier = [(0, source, [])]  # list with (cost, city, path) tuples
+        visited = set()
 
         while frontier:
             frontier.sort()  # sort by cost
             cost, city, path = frontier.pop(0)
-            print(cost, city, path)
-            if city == destination:
-                return path + [city]
-            visited.append(city)
-            for neighbor in source.get_neighbors():
+            print(">>>COST >>> ", cost)
+            if isinstance(city, City):
+                cid = city.name
+            else:
+                cid = city
+            if isinstance(goal_city, City):
+                goal_cid = goal_city.name
+            else:
+                goal_cid = goal_city
+            if cid == goal_cid:
+                return path + [cid]
+            visited.add(cid)
+            objeto = self.get_city_by_name(cid)
+            
+            for neighbor in objeto.get_neighbors():
                 new_cost = cost + neighbor.cost
                 if neighbor not in visited:
-                    frontier.append((new_cost, neighbor, path + [city]))
+                    if isinstance(neighbor.city, City):
+                        viz = neighbor.city.name
+                    else:
+                        viz = neighbor.city
+                    if isinstance(city, City):
+                        cid = city.name
+                    else:
+                        cid = city
+                    total_cost += new_cost
+                    frontier.append((new_cost, viz, path + [cid]))
         return None
 
 
@@ -216,4 +248,6 @@ porto.add_neighbor(viseu, 133)
 
 vila.add_neighbor(viseu, 110)
 
-print(portugal.uniform_cost_search(viseu, aveiro))
+path = portugal.uniform_cost_search(lisboa, castelo)
+
+print(path)
