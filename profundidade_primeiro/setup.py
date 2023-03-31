@@ -86,6 +86,3 @@ porto.add_neighbor(vila, 116)
 porto.add_neighbor(viseu, 133)
 
 vila.add_neighbor(viseu, 110)
-
-total_cost = 0
-path = portugal.get_path(braganca, viseu)

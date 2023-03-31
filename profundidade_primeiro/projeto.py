@@ -3,5 +3,5 @@ from setup import *
         
 portugal = Map('Portugal')
 
-porto.get_neighbor(porto)
-#portugal.find_path(porto, lisboa)
+total_cost = 0
+path = portugal.get_path(braganca, viseu)
