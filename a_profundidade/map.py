@@ -66,12 +66,34 @@ class Map:
                 path_to_destiny.pop()
         return path_to_destiny
 
-    def find_path(self, origin, destiny):
+    # Algorithm of Uniform Cost Search
+    def find_path_to_destiny_cost(self, city, destiny, visited, cost, best_cost, best_path):
+        if city.name == destiny:
+            return best_path
+        visited.append(city)
+        sorted_neighbors_by_cost = sorted(city.neighbors, key=lambda neighbor: neighbor.cost)
+        for neighbor in sorted_neighbors_by_cost:
+            if neighbor.city not in visited:
+                cost += neighbor.cost
+                if cost < best_cost or best_cost == 0:
+                    best_path.append(Travel(neighbor.city, neighbor.cost))
+                    best_cost = cost
+                    best_path = self.find_path_to_destiny_cost(neighbor.city, destiny, visited, cost, best_cost, best_path)
+                    if best_path[-1].city.name == destiny:
+                        return best_path
+                    cost -= best_path[-1].cost
+                    best_path.pop()
+        return best_path
+    
+    def find_path(self, origin, destiny, is_best_path=False):
         origin_city = self.find_city(origin)
         if origin_city is None:
             return
         path_to_destiny = []
         visited = []
         path_to_destiny.append(Travel(origin_city, 0))
-        path_to_destiny = self.find_path_to_destiny(origin_city, destiny, path_to_destiny, visited)
+        if not is_best_path:
+            path_to_destiny = self.find_path_to_destiny(origin_city, destiny, path_to_destiny, visited)
+        else:
+            path_to_destiny = self.find_path_to_destiny_cost(origin_city, destiny, visited, 0, 0, path_to_destiny)
         return path_to_destiny
