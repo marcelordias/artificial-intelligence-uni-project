@@ -54,17 +54,13 @@ class Map:
                     return found
                 
     def find_path_to_destiny(self, city, destiny, path_to_destiny, visited):
-        if city is None:
-            return path_to_destiny
-        if city.name == destiny:
-            return path_to_destiny
         visited.append(city)
         for neighbor in city.neighbors:
             if neighbor.city not in visited:
                 path_to_destiny.append(Travel(neighbor.city, neighbor.cost))
                 if neighbor.city.name == destiny:
                     return path_to_destiny
-                path_to_destiny = self.find_path_to_destiny(neighbor.city, destiny, path_to_destiny, visited)
+                self.find_path_to_destiny(neighbor.city, destiny, path_to_destiny, visited)
                 if path_to_destiny[-1].city.name == destiny:
                     return path_to_destiny
                 path_to_destiny.pop()
@@ -75,8 +71,7 @@ class Map:
         if origin_city is None:
             return
         path_to_destiny = []
-        path_to_destiny.append(Travel(origin_city, 0))
         visited = []
-        visited.append(origin_city)
+        path_to_destiny.append(Travel(origin_city, 0))
         path_to_destiny = self.find_path_to_destiny(origin_city, destiny, path_to_destiny, visited)
         return path_to_destiny
