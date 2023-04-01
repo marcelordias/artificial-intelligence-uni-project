@@ -1,7 +1,7 @@
 import os, io
 from city import City
 from travel import Travel
-
+from colorama import Fore, Style
 class Map:
     def __init__(self):
         path = os.path.abspath("a_profundidade/storage/cidades.txt")
@@ -67,38 +67,64 @@ class Map:
                 path_to_destiny.pop()
         return path_to_destiny
     
-    def find_path_to_destiny_uniform_cost_search(self, city, destiny, path, cost, visited):
+    def find_path_to_destiny_uniform_cost_search_legacy(self, city, destiny, path, cost, visited):
         visited.append(city)
-        path.append(Travel(city, cost))
         if city.name == destiny:
             return path
         possible_paths = []
         for neighbor in city.neighbors:
             if neighbor.city not in visited:
-                new_path = self.find_path_to_destiny_uniform_cost_search(neighbor.city, destiny, path.copy(), cost + neighbor.cost, visited.copy())
+                path.append(Travel(neighbor.city, cost + neighbor.cost))
+                new_path = self.find_path_to_destiny_uniform_cost_search_legacy(neighbor.city, destiny, path.copy(), cost + neighbor.cost, visited.copy())
                 if new_path:
                     possible_paths.append(new_path)
+                path.pop()
         if possible_paths:
             return min(possible_paths, key=lambda x: x[-1].cost)
         return None
     
-    def find_path(self, origin, destiny, is_best_path=False):
+    def find_path_to_destiny_uniform_cost_search_optimized(self, path, start_city, goal_city):
+        frontier = [(0, start_city, path)]
+        visited = []
+
+        while frontier:
+            frontier.sort(key=lambda x: x[0])
+            cost, city, path = frontier.pop(0)
+            
+            if city.name == goal_city:
+                return path
+            
+            visited.append(city)
+
+            for neighbor in city.neighbors:
+                new_cost = cost + neighbor.cost
+                if neighbor not in visited:
+                    frontier.append((new_cost, neighbor.city, path + [Travel(neighbor.city, new_cost)]))
+        return None
+    
+    def find_path(self, origin, destiny, is_best_path):
         origin_city = self.find_city(origin)
         if origin_city is None:
             return
         path_to_destiny = []
         visited = []
-        if not is_best_path:
-            path_to_destiny.append(Travel(origin_city, 0))
+        path_to_destiny.append(Travel(origin_city, 0))
+        if is_best_path == '1':
             path_to_destiny = self.find_path_to_destiny(origin_city, destiny, path_to_destiny, visited)
-        else:
-            path_to_destiny = self.find_path_to_destiny_uniform_cost_search(origin_city, destiny, path_to_destiny, 0, visited)
+        elif is_best_path == '2':
+            path_to_destiny = self.find_path_to_destiny_uniform_cost_search_legacy(origin_city, destiny, path_to_destiny, 0, visited)
+        elif is_best_path == '3':
+            path_to_destiny = self.find_path_to_destiny_uniform_cost_search_optimized(path_to_destiny,origin_city, destiny)
         return path_to_destiny
     
     def print_path(self, path):
         if path:
-            for travel in path:
-                print('-{}- {}'.format(travel.cost,travel.city.name), end=' ')
-            print('\nCusto total: {}'.format(path[-1].cost))
+            print(f'De {Fore.GREEN}{path[0].city.name}{Fore.RESET} para {Fore.CYAN}{path[-1].city.name}{Fore.RESET} o custo total é de {Fore.RED}{path[-1].cost}{Fore.RESET} batatas.')
+            for i in range(len(path)):
+                if i == len(path) - 1:
+                    print(path[i].city.name, end='')
+                else:
+                    print(path[i].city.name, end=' -> ')
         else:
-            print('Caminho não encontrado')
+            print('Não foi possível encontrar um caminho')
+
