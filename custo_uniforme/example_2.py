@@ -248,6 +248,6 @@ porto.add_neighbor(viseu, 133)
 
 vila.add_neighbor(viseu, 110)
 
-path = portugal.uniform_cost_search(lisboa, castelo)
+path = portugal.uniform_cost_search(aveiro, viseu)
 
 print(path)
