@@ -13,6 +13,7 @@ class Map:
             for i in range(1, len(line), 2):
                 neighbor = self.find_city(line[i]) or City(line[i])
                 self.cities[-1].add_neighbor(neighbor, int(line[i+1]))
+                
         cities_txt.close()
 
     def get_all_neighbors(self, neighbors, visited, level=1):
@@ -36,13 +37,13 @@ class Map:
 
     def find_city_neighborhood(self, neighbors, name, visited):
         for neighbor in neighbors:
-            if neighbor.city is None:
-                return
-            if neighbor.city.name == name:
-                return neighbor.city
             if neighbor.city not in visited:
+                if neighbor.city.name == name:
+                    return neighbor.city
                 visited.append(neighbor.city)
-                return self.find_city_neighborhood(neighbor.city.neighbors, name, visited)
+                found = self.find_city_neighborhood(neighbor.city.neighbors, name, visited)
+                if found:
+                    return found
 
     def find_city(self, name):
         if self.cities:
@@ -57,7 +58,7 @@ class Map:
         visited.append(city)
         for neighbor in city.neighbors:
             if neighbor.city not in visited:
-                path_to_destiny.append(Travel(neighbor.city, neighbor.cost))
+                path_to_destiny.append(Travel(neighbor.city, neighbor.cost + path_to_destiny[-1].cost))
                 if neighbor.city.name == destiny:
                     return path_to_destiny
                 self.find_path_to_destiny(neighbor.city, destiny, path_to_destiny, visited)
@@ -65,25 +66,21 @@ class Map:
                     return path_to_destiny
                 path_to_destiny.pop()
         return path_to_destiny
-
-    # Algorithm of Uniform Cost Search
-    def find_path_to_destiny_cost(self, city, destiny, visited, cost, best_cost, best_path):
-        if city.name == destiny:
-            return best_path
+    
+    def find_path_to_destiny_uniform_cost_search(self, city, destiny, path, cost, visited):
         visited.append(city)
-        sorted_neighbors_by_cost = sorted(city.neighbors, key=lambda neighbor: neighbor.cost)
-        for neighbor in sorted_neighbors_by_cost:
+        path.append(Travel(city, cost))
+        if city.name == destiny:
+            return path
+        possible_paths = []
+        for neighbor in city.neighbors:
             if neighbor.city not in visited:
-                cost += neighbor.cost
-                if cost < best_cost or best_cost == 0:
-                    best_path.append(Travel(neighbor.city, neighbor.cost))
-                    best_cost = cost
-                    best_path = self.find_path_to_destiny_cost(neighbor.city, destiny, visited, cost, best_cost, best_path)
-                    if best_path[-1].city.name == destiny:
-                        return best_path
-                    cost -= best_path[-1].cost
-                    best_path.pop()
-        return best_path
+                new_path = self.find_path_to_destiny_uniform_cost_search(neighbor.city, destiny, path.copy(), cost + neighbor.cost, visited.copy())
+                if new_path:
+                    possible_paths.append(new_path)
+        if possible_paths:
+            return min(possible_paths, key=lambda x: x[-1].cost)
+        return None
     
     def find_path(self, origin, destiny, is_best_path=False):
         origin_city = self.find_city(origin)
@@ -91,9 +88,17 @@ class Map:
             return
         path_to_destiny = []
         visited = []
-        path_to_destiny.append(Travel(origin_city, 0))
         if not is_best_path:
+            path_to_destiny.append(Travel(origin_city, 0))
             path_to_destiny = self.find_path_to_destiny(origin_city, destiny, path_to_destiny, visited)
         else:
-            path_to_destiny = self.find_path_to_destiny_cost(origin_city, destiny, visited, 0, 0, path_to_destiny)
+            path_to_destiny = self.find_path_to_destiny_uniform_cost_search(origin_city, destiny, path_to_destiny, 0, visited)
         return path_to_destiny
+    
+    def print_path(self, path):
+        if path:
+            for travel in path:
+                print('-{}- {}'.format(travel.cost,travel.city.name), end=' ')
+            print('\nCusto total: {}'.format(path[-1].cost))
+        else:
+            print('Caminho não encontrado')
