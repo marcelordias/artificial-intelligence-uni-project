@@ -3,42 +3,32 @@ class Map:
         self.cities = []
         self.name = name
 
-    def add_city(self, city):
+    def add_city(self, city, debug=False):
         self.cities.append(city)
+        if debug:
+            print('>> \'{}\' added to \'{}\''.format(city.name, self.name))
 
-    def get_cities(self):
-        print('>> \'{}\' has {} cities:'.format(
-            self.name, len(self.cities)))
-        for city in self.cities:
-            print('\t>> \'{}\''.format(
-                city.name))
-
-    def get_city_by_name(self, name):
-        for city in self.cities:
-            if city.name == name:
-                return city
+    def get_cities(self, debug=False):
+        if debug:
+            print('>> \'{}\' has {} cities:'.format(
+                self.name, len(self.cities)))
+            for city in self.cities:
+                print('\t>> \'{}\''.format(
+                    city.name))
+        return self.cities
 
     # Depth-first search
-    def dfs_get_path(self, source, destination):
+    def dfs_get_path(self, source, destination, debug=False):
         path = []
         visited = []
-        path_cost = 0
-        if source == destination:
-            print('>> You already are in \'{}\''.format(source.name))
-            return path
         visited.append(source)
         path = self.recursive_dfs_get_path(
             source, destination, path, visited)
-        print('>> From \'{}\' to \'{}\' path:'.format(
-            path[0].source.name, path[-1].city.name))
-        for i in path:
-            print('\t>> From \'{}\' to \'{}\' has a cost of {}'.format(
-                i.source.name, i.city.name, i.cost))
-            path_cost += i.cost
-        print('\t-----------')
-        print('\t>> From \'{}\' to \'{}\' has a total cost of {}'.format(
-            path[0].source.name, path[-1].city.name, path_cost))
-        return path
+        result = Path(path)
+        result.set_path_cost()
+        if debug:
+            result.print_path('DFS')
+        return result
 
     def recursive_dfs_get_path(self, source, destination, path, visited):
         if source == destination:
@@ -57,21 +47,24 @@ class Map:
         return path
 
     # Uniform-cost search
-    def ucs_get_path(self, source, destination):
-        frontier = [(0, source.name, [])]
+    def ucs_get_path(self, source, destination, debug=False):
+        neighbors = [(0, source, [])]
         visited = []
 
-        while frontier:
-            frontier.sort()
-            cost, city, path = frontier.pop(0)
-            if city == destination.name:
-                return dict(path=path + [city], cost=cost)
+        while neighbors:
+            neighbors.sort(key=lambda x: x[0])
+            cost, city, path = neighbors.pop(0)
+            if city == destination:
+                path = Path(path, cost)
+                if debug:
+                    path.print_path('UCS')
+                return path
             if city not in visited:
                 visited.append(city)
-            for neighbor in self.get_city_by_name(city).get_neighbors():
-                if neighbor.city.name not in visited:
-                    frontier.append(
-                        (cost + neighbor.cost, neighbor.city.name, path + [city]))
+            for neighbor in city.get_neighbors():
+                if neighbor.city not in visited:
+                    neighbors.append(
+                        (cost + neighbor.cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)]))
 
 
 class Neighbor:
@@ -95,18 +88,45 @@ class City:
             city.neighbors.append(neighbor)
 
     # Returns the given city, or None if the given city is not a neighbor.
-    def get_neighbor(self, city):
+    def get_neighbor(self, city, debug=False):
         for neighbor in self.neighbors:
             if neighbor.city == city:
-                print('>> \'{}\' has \'{}\' as neighbor and has a cost of {}.'.format(
-                    self.name, neighbor.city.name, neighbor.cost))
+                if debug:
+                    print('>> \'{}\' has \'{}\' as neighbor and has a cost of {}.'.format(
+                        self.name, neighbor.city.name, neighbor.cost))
                 return neighbor
 
     # Get a list of neighbors.
-    def get_neighbors(self):
-        print('>> \'{}\' has {} neighbor(s):'.format(
-            self.name, len(self.neighbors)))
-        for neighbor in self.neighbors:
-            print('\t>> \'{}\' and has a cost of {}.'.format(
-                neighbor.city.name, neighbor.cost))
+    def get_neighbors(self, debug=False):
+        if debug:
+            print('>> \'{}\' has {} neighbor(s):'.format(
+                self.name, len(self.neighbors)))
+            for neighbor in self.neighbors:
+                print('\t>> \'{}\' and has a cost of {}.'.format(
+                    neighbor.city.name, neighbor.cost))
         return self.neighbors
+
+
+class Path:
+    def __init__(self, path, cost=0):
+        self.path = path
+        self.cost = cost
+
+    def print_path(self, algorithm):
+        if len(self.path) > 0:
+            print('>> From \'{}\' to \'{}\' path, using {} algorithm:'.format(
+                self.path[0].source.name, self.path[-1].city.name, algorithm))
+            for i in self.path:
+                print('\t>> From \'{}\' to \'{}\' has a cost of {}'.format(
+                    i.source.name, i.city.name, i.cost))
+            print('\t-----------')
+            print('\t>> From \'{}\' to \'{}\' has a total cost of {}'.format(
+                self.path[0].source.name, self.path[-1].city.name, self.cost))
+        else:
+            print('>> There is no path to print')
+
+    def set_path_cost(self):
+        cost = 0
+        for i in self.path:
+            cost += i.cost
+        self.cost = cost
