@@ -16,6 +16,11 @@ class Map:
                 print('\t>> \'{}\''.format(
                     city.name))
         return self.cities
+    
+    def get_city_by_name(self, name):
+        for city in self.cities:
+            if city.name.lower() == name.lower():
+                return city
 
     # Depth-first search
     def dfs_get_path(self, source, destination, debug=False):
