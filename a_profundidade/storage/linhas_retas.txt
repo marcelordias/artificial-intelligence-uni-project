@@ -1,12 +1,12 @@
-Aveiro,Faro,336
-Braga, Faro,454
+Aveiro,Faro,366
+Braga,Faro,454
 Bragança,Faro,487
 Beja,Faro,99
 Castelo Branco,Faro,280
 Coimbra,Faro,319
 Évora,Faro,157
 Faro,Faro,0
-Guarda,Faro,359
+Guarda,Faro,352
 Leiria,Faro,278
 Lisboa,Faro,195
 Portalegre,Faro,228
