@@ -115,19 +115,19 @@ class Map:
         visited = []
 
         while frontier:
+            frontier.sort(key=lambda x: x[0])
             cost, city, path = frontier.pop(0)
             
             if city.name == goal_city:
                 return path
             
             visited.append(city)
-            smaller_distance = float('inf')
+            
             for neighbor in city.neighbors:
-                new_cost = cost + neighbor.cost
                 distance_to_destiny = neighbor.city.straight_line.cost
-                if neighbor not in visited and distance_to_destiny < smaller_distance:
-                    smaller_distance = distance_to_destiny
-                    frontier.append((new_cost, neighbor.city, path + [Travel(neighbor.city, new_cost)]))
+                previous_cost = path[-1].cost
+                if neighbor not in visited:
+                    frontier.append((distance_to_destiny, neighbor.city, path + [Travel(neighbor.city, neighbor.cost + previous_cost)]))
         return None
 
     def find_path_to_destiny_a_star_search(self, path, start_city, goal_city):
