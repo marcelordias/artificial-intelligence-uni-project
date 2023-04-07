@@ -105,8 +105,8 @@ class Map:
             visited.append(city)
 
             for neighbor in city.neighbors:
-                new_cost = cost + neighbor.cost
                 if neighbor not in visited:
+                    new_cost = cost + neighbor.cost
                     frontier.append((new_cost, neighbor.city, path + [Travel(neighbor.city, new_cost)]))
         return None
     
@@ -124,9 +124,9 @@ class Map:
             visited.append(city)
             
             for neighbor in city.neighbors:
-                distance_to_destiny = neighbor.city.straight_line.cost
-                previous_cost = path[-1].cost
                 if neighbor not in visited:
+                    distance_to_destiny = neighbor.city.straight_line.cost
+                    previous_cost = path[-1].cost
                     frontier.append((distance_to_destiny, neighbor.city, path + [Travel(neighbor.city, neighbor.cost + previous_cost)]))
         return None
 
@@ -143,10 +143,10 @@ class Map:
             
             visited.append(city)
             for neighbor in city.neighbors:
-                new_cost = cost + neighbor.cost
-                distance_to_destiny = neighbor.city.straight_line.cost
-                previous_cost = path[-1].cost
                 if neighbor not in visited:
+                    new_cost = cost + neighbor.cost
+                    distance_to_destiny = neighbor.city.straight_line.cost
+                    previous_cost = path[-1].cost
                     frontier.append((new_cost + distance_to_destiny, neighbor.city, path + [Travel(neighbor.city, neighbor.cost + previous_cost)]))
         return None
 
@@ -179,4 +179,3 @@ class Map:
                     print(path[i].city.name, end=' -> ')
         else:
             print('Não foi possível encontrar um caminho')
-
