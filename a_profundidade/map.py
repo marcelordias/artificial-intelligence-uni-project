@@ -2,6 +2,7 @@ import os, io
 from city import City
 from travel import Travel
 from colorama import Fore
+from custom_exeptions import CityNotFound
 class Map:
     def __init__(self):
         # Loads the cities from the file and creates the graph
@@ -153,7 +154,9 @@ class Map:
     def find_path(self, origin, destiny, option):
         origin_city = self.find_city(origin)
         if origin_city is None:
-            return
+            raise CityNotFound("Cidade de origem não encontrada")
+        if self.find_city(destiny) is None:
+            raise CityNotFound("Cidade de destino não encontrada")
         path_to_destiny = []
         visited = []
         path_to_destiny.append(Travel(origin_city, 0))
@@ -171,11 +174,14 @@ class Map:
     
     def print_path(self, path):
         if path:
-            print(f'De {Fore.GREEN}{path[0].city.name}{Fore.RESET} para {Fore.CYAN}{path[-1].city.name}{Fore.RESET} o custo total é de {Fore.RED}{path[-1].cost}{Fore.RESET} batatas.')
+            print()
             for i in range(len(path)):
-                if i == len(path) - 1:
-                    print(path[i].city.name, end='')
+                if i == 0:
+                    print(f'{Fore.GREEN}{path[i].city.name}{Fore.RESET}', end='')
+                elif i < len(path) - 1:
+                    print(f' -({Fore.RED}{path[i].cost - path[i-1].cost}{Fore.RESET})-> {Fore.YELLOW}{path[i].city.name}{Fore.RESET}', end='')
                 else:
-                    print(path[i].city.name, end=' -> ')
+                    print(f' -({Fore.RED}{path[i].cost - path[i-1].cost}{Fore.RESET})-> {Fore.CYAN}{path[i].city.name}{Fore.RESET}', end='')
+            print(f'\nValor total: {Fore.RED}{path[-1].cost}{Fore.RESET}')
         else:
             print('Não foi possível encontrar um caminho')

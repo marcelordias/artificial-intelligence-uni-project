@@ -1,4 +1,6 @@
 from map import Map
+from colorama import Fore
+from custom_exeptions import CityNotFound, PathNotFound
 
 def menu():
     while True:
@@ -34,16 +36,19 @@ def search_menu():
             return op
         print('\033c', end='')
 
-def main():
+def press_enter():
+    input(f'\n{Fore.MAGENTA}Pressione ENTER para continuar...{Fore.RESET}')
+    print('\033c', end='')
+
+try:
     portugal = Map()
-    try:
-        while True:
-            option = menu()
-            if option == '1':
-                portugal.get_all_cities()
-                print('\nPressione ENTER para continuar...')
-                input()
-            elif option == '2':
+    while True:
+        option = menu()
+        if option == '1':
+            portugal.get_all_cities()
+            press_enter()
+        elif option == '2':
+            try:
                 option = search_menu()
                 if option == '0':
                     continue
@@ -53,17 +58,18 @@ def main():
                     destiny = 'Faro'
                 else:
                     destiny = input('Digite o nome da cidade de destino: ')
-
                 path = portugal.find_path(city, destiny, option)
                 portugal.print_path(path)
-                print('\nPressione ENTER para continuar...')
-                input()
-            elif option == '0':
-                break
-            else:
-                print('Opção inválida')
-    except KeyboardInterrupt:
-        print('Programa interrompido.')
-
-if __name__ == '__main__':
-    main()
+            except CityNotFound as e:
+                print(f'\n{Fore.RED}{e}{Fore.RESET}')
+            except PathNotFound as e:
+                print(f'\n{Fore.RED}{e}{Fore.RESET}')
+            finally:
+                press_enter()
+        elif option == '0':
+            break
+        else:
+            print(f'\n{Fore.RED}Opção inválida!{Fore.RESET}')
+except KeyboardInterrupt:
+    print('\033c', end='')
+    print(f'\n{Fore.RED}Programa interrompido!{Fore.RESET}')
