@@ -2,7 +2,7 @@ import os, io
 from city import City
 from travel import Travel
 from colorama import Fore
-from custom_exeptions import CityNotFound
+from custom_exeptions import CityNotFound, PathNotFound, OriginAndDestinyAreTheSame
 class Map:
     def __init__(self):
         # Loads the cities from the file and creates the graph
@@ -152,6 +152,9 @@ class Map:
         return None
 
     def find_path(self, origin, destiny, option):
+        if origin == destiny:
+            raise OriginAndDestinyAreTheSame("Cidade de origem e destino são iguais")
+
         origin_city = self.find_city(origin)
         if origin_city is None:
             raise CityNotFound("Cidade de origem não encontrada")
@@ -184,4 +187,4 @@ class Map:
                     print(f' -({Fore.RED}{path[i].cost - path[i-1].cost}{Fore.RESET})-> {Fore.CYAN}{path[i].city.name}{Fore.RESET}', end='')
             print(f'\nValor total: {Fore.RED}{path[-1].cost}{Fore.RESET}')
         else:
-            print('Não foi possível encontrar um caminho')
+            raise PathNotFound("Caminho não encontrado")

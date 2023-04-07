@@ -1,6 +1,6 @@
 from map import Map
 from colorama import Fore
-from custom_exeptions import CityNotFound, PathNotFound
+from custom_exeptions import CityNotFound, PathNotFound, OriginAndDestinyAreTheSame
 
 def menu():
     while True:
@@ -61,15 +61,15 @@ try:
                 path = portugal.find_path(city, destiny, option)
                 portugal.print_path(path)
             except CityNotFound as e:
-                print(f'\n{Fore.RED}{e}{Fore.RESET}')
+                print(f'\n{Fore.YELLOW}Aviso: {e}{Fore.RESET}')
             except PathNotFound as e:
-                print(f'\n{Fore.RED}{e}{Fore.RESET}')
+                print(f'\n{Fore.YELLOW}Aviso: {e}{Fore.RESET}')
+            except OriginAndDestinyAreTheSame as e:
+                print(f'\n{Fore.YELLOW}Aviso: {e}{Fore.RESET}')
             finally:
                 press_enter()
         elif option == '0':
             break
-        else:
-            print(f'\n{Fore.RED}Opção inválida!{Fore.RESET}')
 except KeyboardInterrupt:
     print('\033c', end='')
-    print(f'\n{Fore.RED}Programa interrompido!{Fore.RESET}')
+    print(f'\n{Fore.YELLOW}Aviso: Programa interrompido!{Fore.RESET}')
