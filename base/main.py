@@ -10,10 +10,9 @@ def menu():
     while True:
         print('\033c', end='')
         print("+{:-^47}+".format("+"))
-        print("|{:^47}|".format("MENU DE OPÇÕES"))
+        print("|{:^47}|".format("Menu de opções"))
         print("+{:-^47}+".format("+"))
-        print("|{:<47}|".format("1 - Mostrar todas as cidades e seus vizinhos"))
-        print("|{:<47}|".format("2 - Procurar caminho entre duas cidades"))
+        print("|{:<47}|".format("1 - Procurar o caminho entre duas cidades"))
         print("|{:<47}|".format("0 - Sair"))
         print("+{:-^47}+".format("+"))
         op = input('Digite a opção desejada: ')
@@ -26,10 +25,12 @@ def menu():
 def search_menu():
     while True:
         print("+{:-^47}+".format("+"))
-        print("|{:^47}|".format("ALGORITMOS DE PESQUISA"))
+        print("|{:^47}|".format("Algoritmos de pesquisa"))
         print("+{:-^47}+".format("+"))
-        print("|{:<47}|".format("1 - Busca em profundidade (DFS)"))
-        print("|{:<47}|".format("2 - Busca custo uniforme (UCS)"))
+        print("|{:<47}|".format("1 - Em profundidade primeiro (DFS)"))
+        print("|{:<47}|".format("2 - Custo uniforme (UCS)"))
+        print("|{:<47}|".format("3 - Procura sôfrega"))
+        print("|{:<47}|".format("4 - A*"))
         print("|{:<47}|".format("0 - Voltar"))
         print("+{:-^47}+".format("+"))
         op = input('Digite a opção desejada: ')
@@ -44,20 +45,20 @@ def main():
         while True:
             option = menu()
             if option == '1':
-                portugal.get_cities(True)
-                print('\nPressione ENTER para continuar...')
-                input()
-            elif option == '2':
                 option = search_menu()
                 if option == '0':
                     continue
                 city = input('Digite o nome da cidade de origem: ')
                 destiny = input('Digite o nome da cidade de destino: ')
-
+                print('')
                 city = portugal.get_city_by_name(city)
                 destiny = portugal.get_city_by_name(destiny)
 
-                portugal.dfs_get_path(city, destiny, True)
+                if option == '1':
+                  portugal.dfs_get_path(city, destiny, True)
+
+                elif option == '2':
+                    portugal.ucs_get_path(city, destiny, True)
                 print('\nPressione ENTER para continuar...')
                 input()
             elif option == '0':
