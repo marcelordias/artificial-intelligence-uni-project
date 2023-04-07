@@ -167,8 +167,6 @@ class Map:
             path_to_destiny = self.find_path_to_destiny_greedy_search(path_to_destiny,origin_city, destiny)
         elif option == '5': # Busca A*
             path_to_destiny = self.find_path_to_destiny_a_star_search(path_to_destiny,origin_city, destiny)
-        else:
-            return []
         return path_to_destiny
     
     def print_path(self, path):
