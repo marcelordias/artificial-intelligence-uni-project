@@ -140,24 +140,24 @@ class Map:
 
     # Finds the path to the destiny city using A* search (interactive)
     def find_path_to_destiny_a_star_search(self, path_to_destiny, origin_city, destiny_city):
-        frontier = [(0, origin_city, path_to_destiny)] # Creates a list of current paths to the destiny city
-        visited = [] # Creates a list of visited cities
+        current_path = [(0, origin_city, path_to_destiny)] # Creates a list of current paths to the destiny city
+        visited_path = [] # Creates a list of visited cities
 
-        while frontier: # While there are current paths to the destiny city to be explored
-            frontier.sort(key=lambda x: x[0]) # Sorts the list of current paths to the destiny city by the cost of the path (ascending order)
-            cost, city, path_to_destiny = frontier.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
+        while current_path: # While there are current paths to the destiny city to be explored
+            current_path.sort(key=lambda x: x[0]) # Sorts the list of current paths to the destiny city by the cost of the path (ascending order)
+            cost, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
             
             if city.name == destiny_city: # If the city is the destiny city
                 return path_to_destiny # Returns the path to the destiny city
             
-            visited.append(city) # Adds the city to the list of visited cities
+            visited_path.append(city) # Adds the city to the list of visited cities
             
             for neighbor in city.neighbors: # Iterates over the neighbors of the city
-                if neighbor not in visited: # If the neighbor is not in the list of visited cities
+                if neighbor not in visited_path: # If the neighbor is not in the list of visited cities
                     new_cost = cost + neighbor.cost # Calculates the new cost
                     distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
                     previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
-                    frontier.append((new_cost + distance_to_destiny, neighbor.city, path_to_destiny + [Travel(neighbor.city, neighbor.cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
+                    current_path.append((new_cost + distance_to_destiny, neighbor.city, path_to_destiny + [Travel(neighbor.city, neighbor.cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
         return None # Returns None
     
     # Find the path using the informed search algorithm 
