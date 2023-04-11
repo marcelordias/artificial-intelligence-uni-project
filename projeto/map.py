@@ -112,7 +112,7 @@ class Map:
             visited_path.append(city) # Adds the city to the list of visited cities
 
             for neighbor in city.neighbors: # Iterates over the neighbors of the city
-                if neighbor not in visited_path: # If the neighbor is not in the list of visited cities
+                if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
                     new_cost = cost + neighbor.cost # Calculates the new cost
                     current_path.append((new_cost, neighbor.city, path_to_destiny + [Travel(neighbor.city, new_cost)])) # Adds the neighbor to the list of current paths to the destiny city 
         return None
@@ -132,7 +132,7 @@ class Map:
             visited_path.append(city) # Adds the city to the list of visited cities
             
             for neighbor in city.neighbors: # Iterates over the neighbors of the city
-                if neighbor not in visited_path: # If the neighbor is not in the list of visited cities
+                if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
                     distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
                     previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
                     current_path.append((distance_to_destiny, neighbor.city, path_to_destiny + [Travel(neighbor.city, neighbor.cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
@@ -153,7 +153,7 @@ class Map:
             visited_path.append(city) # Adds the city to the list of visited cities
             
             for neighbor in city.neighbors: # Iterates over the neighbors of the city
-                if neighbor not in visited_path: # If the neighbor is not in the list of visited cities
+                if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
                     new_cost = cost + neighbor.cost # Calculates the new cost
                     distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
                     previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
