@@ -154,10 +154,11 @@ class Map:
             
             for neighbor in city.neighbors: # Iterates over the neighbors of the city
                 if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
-                    new_cost = cost + neighbor.cost # Calculates the new cost
                     distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
                     previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
-                    current_path.append((new_cost + distance_to_destiny, neighbor.city, path_to_destiny + [Travel(neighbor.city, neighbor.cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
+                    current_cost = neighbor.cost # Get the actual cost of the neighbor
+                    euristic_cost = current_cost + distance_to_destiny # Calculates the euristic cost
+                    current_path.append((euristic_cost, neighbor.city, path_to_destiny + [Travel(neighbor.city, current_cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
         return None # Returns None
     
     # Find the path using the informed search algorithm 
@@ -188,8 +189,10 @@ class Map:
         return path_to_destiny # Returns the path to the destiny city
     
     # Prints the path to the destiny city
-    def print_path(self, path): # Prints the path to the destiny city
+    def print_path(self, path, algorithm_name): # Prints the path to the destiny city
         if path: # If the path is not empty
+            print() # Prints a blank line
+            print(f'Algoritmo: {Fore.MAGENTA}{algorithm_name}{Fore.RESET}') # Prints the name of the algorithm in green
             print() # Prints a blank line
             for i in range(len(path)): # Iterates over the path
                 if i == 0: # If it is the first city in the path
