@@ -117,49 +117,56 @@ class Map:
                     current_path.append((new_cost, neighbor.city, path_to_destiny + [Travel(neighbor.city, new_cost)])) # Adds the neighbor to the list of current paths to the destiny city 
         return None
     
-    # Finds the path to the destiny city using greedy-search (interactive)
-    def find_path_to_destiny_greedy_search(self, path_to_destiny, origin_city, destiny_city):
-        current_path = [(0, origin_city, path_to_destiny)] # Creates a list of current paths to the destiny city
-        visited_path = [] # Creates a list of visited cities
+    # Finds the path to the destiny city using greedy-search (recursive)
+    def find_path_to_destiny_greedy_search(self, path_to_destiny, current_city, destiny_city, visited_path):
+        visited_path.append(current_city) # Adds the city to the list of visited cities
 
-        while current_path: # While there are current paths to the destiny city to be explored
-            current_path.sort(key=lambda x: x[0]) # Sorts the list of current paths to the destiny city by the cost of the path (ascending order)
-            cost, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
-            
-            if city.name == destiny_city: # If the city is the destiny city
-                return path_to_destiny # Returns the path to the destiny city
-            
-            visited_path.append(city) # Adds the city to the list of visited cities
-            
-            for neighbor in city.neighbors: # Iterates over the neighbors of the city
-                if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
-                    distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
-                    previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
-                    current_path.append((distance_to_destiny, neighbor.city, path_to_destiny + [Travel(neighbor.city, neighbor.cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
-        return None
+        if current_city.name == destiny_city: # If we've reached the destination city
+            return path_to_destiny # Return the path to the destination city
+        
+        possible_paths = [] # Creates a list of possible paths to the destiny city
 
-    # Finds the path to the destiny city using A* search (interactive)
-    def find_path_to_destiny_a_star_search(self, path_to_destiny, origin_city, destiny_city):
-        current_path = [(0, origin_city, path_to_destiny)] # Creates a list of current paths to the destiny city
-        visited_path = [] # Creates a list of visited cities
+        for neighbor in current_city.neighbors: # Iterates over the neighbors of the city
+            if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
+                distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
+                previous_cost = path_to_destiny[-1].cost # Get the cost of the last city in the path to the destiny city
+                current_cost = neighbor.cost # Get the cost of the neighbor
+                new_path = path_to_destiny + [Travel(neighbor.city, previous_cost + current_cost)] # Creates a new path to the destiny city
+                possible_paths.append((distance_to_destiny, neighbor.city, new_path)) # Adds the neighbor to the list of possible paths to the destiny city
+        
+        if not possible_paths: # If there are possible paths to the destiny city
+            return None # Returns None
+        
+        possible_paths.sort(key=lambda x: x[0]) # Sorts the list of possible paths to the destiny city by the distance to the destiny city (ascending order)
+        _, next_city, next_path = possible_paths[0] # Gets the next city and the next path to the destiny city
+        
+        return self.find_path_to_destiny_greedy_search(next_path, next_city, destiny_city, visited_path) # Calls the function find_path_to_destiny_greedy_search recursively with the next city as the city
 
-        while current_path: # While there are current paths to the destiny city to be explored
-            current_path.sort(key=lambda x: x[0]) # Sorts the list of current paths to the destiny city by the cost of the path (ascending order)
-            cost, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
-            
-            if city.name == destiny_city: # If the city is the destiny city
-                return path_to_destiny # Returns the path to the destiny city
-            
-            visited_path.append(city) # Adds the city to the list of visited cities
-            
-            for neighbor in city.neighbors: # Iterates over the neighbors of the city
-                if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
-                    distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
-                    previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
-                    current_cost = neighbor.cost # Get the actual cost of the neighbor
-                    euristic_cost = current_cost + distance_to_destiny # Calculates the euristic cost
-                    current_path.append((euristic_cost, neighbor.city, path_to_destiny + [Travel(neighbor.city, current_cost + previous_cost)])) # Adds the neighbor to the list of current paths to the destiny city
-        return None # Returns None
+    # Finds the path to the destiny city using A* search (recursive)
+    def find_path_to_destiny_a_star_search(self, path_to_destiny, current_city, destiny_city, visited_path):
+        visited_path.append(current_city) # Adds the city to the list of visited cities
+
+        if current_city.name == destiny_city:  # If we've reached the destination city
+            return path_to_destiny # Return the path to the destination city
+        
+        possible_paths = [] # Creates a list of possible paths to the destiny city
+
+        for neighbor in current_city.neighbors: # Iterates over the neighbors of the city
+            if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
+                distance_to_destiny = neighbor.city.straight_line.cost # Get the distance to the destiny city from the neighbor
+                previous_cost = path_to_destiny[-1].cost # Get the cost of the previous city in the path to the destiny city
+                current_cost = neighbor.cost # Get the cost of the neighbor
+                heuristic_cost = current_cost + distance_to_destiny # Calculates the heuristic cost
+                new_path = path_to_destiny + [Travel(neighbor.city, current_cost + previous_cost)] # Creates a new path to the destiny city
+                possible_paths.append((heuristic_cost + previous_cost, neighbor.city, new_path)) # Adds the path to the list of possible paths to the destiny city
+
+        if not possible_paths:  # If there are no possible paths, return None 
+            return None 
+        
+        possible_paths.sort(key=lambda x: x[0]) # Sorts the list of possible paths to the destiny city by the cost of the path (ascending order)
+        _ , next_city, next_path = possible_paths[0] # Removes the first path in the list of possible paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
+        
+        return self.find_path_to_destiny_a_star_search(next_path, next_city, destiny_city, visited_path) # Recursively calls the function to find the path to the destiny city
     
     # Find the path using the informed search algorithm 
     def find_path(self, origin_city_name, destiny_city_name, option):
@@ -183,9 +190,9 @@ class Map:
         elif option == '3': # Uniform-cost search (optimized)
             path_to_destiny = self.find_path_to_destiny_uniform_cost_search_optimized(path_to_destiny,origin_city, destiny_city_name)
         elif option == '4': # Greedy search
-            path_to_destiny = self.find_path_to_destiny_greedy_search(path_to_destiny,origin_city, destiny_city_name)
+            path_to_destiny = self.find_path_to_destiny_greedy_search(path_to_destiny,origin_city, destiny_city_name,visited)
         elif option == '5': # A* search
-            path_to_destiny = self.find_path_to_destiny_a_star_search(path_to_destiny,origin_city, destiny_city_name)
+            path_to_destiny = self.find_path_to_destiny_a_star_search(path_to_destiny,origin_city, destiny_city_name,visited)
         return path_to_destiny # Returns the path to the destiny city
     
     # Prints the path to the destiny city
