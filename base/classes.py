@@ -39,7 +39,7 @@ class Map:
         visited.append(source)
         for neighbor in source.neighbors:
             if neighbor.city not in visited:
-                print('>> Passei por', neighbor.city.name)
+                print('>> A processar ' + G + neighbor.city.name + W)
                 path.append(Neighbor(neighbor.city, neighbor.cost, source))
                 cost += neighbor.cost
                 costs.append(cost) # Lista para armazenar os custos calculados ao longo do percurso.
@@ -69,9 +69,10 @@ class Map:
                 visited.append(city)
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
+                    print('>> A processar ' + G + neighbor.city.name + W)
                     explored_nodes.append(
                         (cost + neighbor.cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)]))
-
+  
     # Greedy search
     def get_greedy_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [], 0)]
