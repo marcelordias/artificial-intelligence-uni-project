@@ -39,10 +39,10 @@ class Map:
         visited.append(source)
         for neighbor in source.neighbors:
             if neighbor.city not in visited:
+                print('>> Passei por', neighbor.city.name)
                 path.append(Neighbor(neighbor.city, neighbor.cost, source))
                 cost += neighbor.cost
-                # Lista para armazenar os custos calculados ao longo do percurso.
-                costs.append(cost)
+                costs.append(cost) # Lista para armazenar os custos calculados ao longo do percurso.
                 if neighbor.city == destination:
                     return Path(path, costs[-1])
                 self.recursive_get_dfs_path(
@@ -51,9 +51,10 @@ class Map:
                     return Path(path, costs[-1])
                 removed = path.pop()
                 cost -= removed.cost
+        return Path(path, costs[-1])
 
     # Uniform-cost search
-    def ucs_get_path(self, source, destination, debug=False):
+    def get_ucs_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [])]
         visited = []
         while explored_nodes:
@@ -72,7 +73,7 @@ class Map:
                         (cost + neighbor.cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)]))
 
     # Greedy search
-    def greedy_get_path(self, source, destination, debug=False):
+    def get_greedy_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [], 0)]
         visited = []
 
@@ -93,8 +94,8 @@ class Map:
                         (cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)], total_cost + neighbor.cost))
 
     # A* search
-    def a_star_get_path(self, source, destination, debug=False):
-        explored_nodes = [(0, source, [], 0)]
+    def get_a_star_path(self, source, destination, debug=False):
+        explored_nodes = [(0, source, [Neighbor(source, 0, source)], 0)]
         visited = []
 
         while explored_nodes:
@@ -109,7 +110,8 @@ class Map:
                 visited.append(city)
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
-                    cost = neighbor.city.straight_neighbor.cost + neighbor.cost
+                    cost = neighbor.city.straight_neighbor.cost + neighbor.cost + path[-1].cost
+                    print(cost)
                     explored_nodes.append(
                         (cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)], total_cost + neighbor.cost))
 

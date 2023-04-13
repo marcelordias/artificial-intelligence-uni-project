@@ -72,16 +72,16 @@ def main():
                     destination = source.straight_neighbor.city
                     print('\nCidade de destino é por omissão \'{}\'\n'.format(destination.name))
                 if option == '1':
-                    portugal.dfs_get_path(source, destination, True)
+                    portugal.get_dfs_path(source, destination, True)
 
                 elif option == '2':
-                    portugal.ucs_get_path(source, destination, True)
+                    portugal.get_ucs_path(source, destination, True)
 
                 elif option == '3':
-                    portugal.greedy_get_path(source, destination, True)
+                    portugal.get_greedy_path(source, destination, True)
 
                 elif option == '4':
-                    portugal.a_star_get_path(source, destination, True)
+                    portugal.get_a_star_path(source, destination, True)
                 print('\n>> Pressionar ENTER para continuar...')
                 input()
             elif option == '0':
