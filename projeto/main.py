@@ -2,11 +2,12 @@
 from map import Map
 from colorama import Fore
 from custom_exeptions import CityNotFound, PathNotFound, OriginAndDestinyAreTheSame
+from config import Config
 
 # This function prints the menu and returns the option chosen
 def menu():
     while True:
-        print('\033c', end='') # Clears the screen
+        print('\033c', end='') if not Config.DEBUG else None # Clears the screen if DEBUG is True
         print("+{:-^47}+".format("+")) # Prints the top of the menu
         print("|{:^47}|".format("MENU DE OPÇÕES")) # Prints the title of the menu
         print("+{:-^47}+".format("+")) # Prints the line under the title
@@ -16,9 +17,9 @@ def menu():
         print("+{:-^47}+".format("+")) # Prints the bottom of the menu
         op = input('Digite a opção desejada: ') # Gets the option chosen
         if op in ['1', '2', '0']: # If the option is valid
-            print('\033c', end='') # Clears the screen
+            print('\033c', end='') if not Config.DEBUG else None # Clears the screen if DEBUG is True
             return op # Returns the option chosen
-        print('\033c', end='') # Clears the screen
+        print('\033c', end='') if not Config.DEBUG else None # Clears the screen if DEBUG is True
 
 # This function prints the search menu and returns the option chosen
 def search_menu():
@@ -35,7 +36,7 @@ def search_menu():
         print("+{:-^47}+".format("+")) # Prints the bottom of the menu
         op = input('Digite a opção desejada: ') # Gets the option chosen
         if op in ['1', '2', '3', '4', '5', '0']: # If the option is valid
-            print('\033c', end='') # Clears the screen
+            print('\033c', end='') if not Config.DEBUG else None # Clears the screen if DEBUG is True
             algorithm_name = '' # Creates a variable to store the name of the algorithm
             if op == '1': # If the option is 1 (Depth-first search)
                 algorithm_name = 'Procura em profundidade' # Sets the name of the algorithm to 'Depth-first search'
@@ -48,7 +49,7 @@ def search_menu():
             elif op == '5': # If the option is 5 (A* search)
                 algorithm_name = 'Procura A*' # Sets the name of the algorithm to 'A* search'
             return (op, algorithm_name) # Returns the option chosen and the name of the algorithm
-        print('\033c', end='') # Clears the screen
+        print('\033c', end='') if not Config.DEBUG else None # Clears the screen if DEBUG is True
 
 # This function waits for the user to press ENTER
 def press_enter():
@@ -62,7 +63,7 @@ try: # Tries to run the program
         option = menu() # Gets the option chosen
         if option == '1': # If the option is 1 (Show all cities and their neighbors)
             portugal.print_all_cities() # Prints all cities and their neighbors
-            press_enter() # Waits for the user to press ENTER
+            press_enter() if not Config.DEBUG else None # Waits for the user to press ENTER
         elif option == '2': # If the option is 2 (Search for a path between two cities)
             try: # Tries to find a path between two cities
                 option, algorithm_name = search_menu() # Gets the option chosen
@@ -83,9 +84,9 @@ try: # Tries to run the program
             except OriginAndDestinyAreTheSame as e: # If the origin and destiny cities are the same
                 print(f'\n{Fore.YELLOW}Aviso: {e}{Fore.RESET}') # Prints a warning message
             finally: # Runs no matter what
-                press_enter() # Waits for the user to press ENTER
+                press_enter() if not Config.DEBUG else None # Waits for the user to press ENTER
         elif option == '0': # If the option is 0 (Exit)
             break # Exits the infinite loop
 except KeyboardInterrupt: # If the user presses CTRL+C
-    print('\033c', end='') # Clears the screen
+    print('\033c', end='') if not Config.DEBUG else None # Clears the screen if DEBUG is True
     print(f'\n{Fore.YELLOW}Aviso: Programa interrompido!{Fore.RESET}') # Prints a warning message
