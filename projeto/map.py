@@ -104,7 +104,7 @@ class Map:
 
         while current_path: # While there are current paths to the destiny city to be explored
             current_path.sort(key=lambda x: x[0]) # Sorts the list of current paths to the destiny city by the cost of the path (ascending order)
-            cost, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
+            previous_cost, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
             
             if city.name == destiny_city: # If the city is the destiny city
                 return path_to_destiny # Returns the path to the destiny city
@@ -113,7 +113,8 @@ class Map:
 
             for neighbor in city.neighbors: # Iterates over the neighbors of the city
                 if neighbor.city not in visited_path: # If the neighbor is not in the list of visited cities
-                    new_cost = cost + neighbor.cost # Calculates the new cost
+                    current_cost = neighbor.cost # Get the cost of the previous city in the path to the destiny city
+                    new_cost = current_cost + previous_cost # Calculates the new cost of the path to the destiny city
                     current_path.append((new_cost, neighbor.city, path_to_destiny + [Travel(neighbor.city, new_cost)])) # Adds the neighbor to the list of current paths to the destiny city 
         return None
     
