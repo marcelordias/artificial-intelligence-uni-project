@@ -28,29 +28,48 @@ class Map:
 
     # Depth-first search
     def get_dfs_path(self, source, destination, debug=False):
-        path = self.recursive_get_dfs_path(source, destination)
+        if debug:
+            print('>> De ' + G + source.name + W + ' para ' + G + destination.name + W + ', usando o algoritmo ' + P + 'Em profundidade primeiro' + W + ', as iterações são: ')
+        path = self.recursive_get_dfs_path(source, destination, debug=True)
         if debug:
             path.print_path('Em profundidade primeiro')
         return path
 
-    def recursive_get_dfs_path(self, source, destination, path=[], visited=[], cost=0, costs=[]):
-        if source == destination:
+    def recursive_get_dfs_path(self, source, destination, path=None, visited=None, cost=0, costs=None, debug=False):
+        # Set empty arrays
+        if path == None:
+            path = []
+        if visited == None:
+            visited = []
+        if costs == None:
+            costs = []
+
+        if source == destination:  # Check if the source city is the same as destination city
             return Path(path, cost)
-        visited.append(source)
-        for neighbor in source.neighbors:
-            if neighbor.city not in visited:
-                print('>> A processar ' + G + neighbor.city.name + W)
+        visited.append(source)  # Add the source to the visited cities list
+
+        for neighbor in source.neighbors:  # Loop over each source neighbor
+            if neighbor.city not in visited:  # Process only not yet visited cities
+                if debug:
+                    print('\t>> De ' + G + source.name +
+                          W + ' para ' + G + neighbor.city.name + W)
+                # Add it to the path list
                 path.append(Neighbor(neighbor.city, neighbor.cost, source))
-                cost += neighbor.cost
-                costs.append(cost) # Lista para armazenar os custos calculados ao longo do percurso.
-                if neighbor.city == destination:
+                cost += neighbor.cost  # Increment the cost with the cost from source to neighbor
+                # Add to costs list (useful to get the total cost)
+                costs.append(cost)
+
+                if neighbor.city == destination:  # Check if the destination was found
                     return Path(path, costs[-1])
-                self.recursive_get_dfs_path(
-                    neighbor.city, destination, path, visited, cost)
-                if path[-1].city == destination:
+
+                self.recursive_get_dfs_path(  # Recursive function call if the destination was not found
+                    neighbor.city, destination, path, visited, cost, costs, debug=debug)
+                if path[-1].city == destination: # When destination was found, check if the last city in path list is the destination
                     return Path(path, costs[-1])
-                removed = path.pop()
-                cost -= removed.cost
+                removed = path.pop() # If not, remove the last city from path list
+                if debug:
+                    print('\t>> A ' + R + 'sair' + W + ' de ' + G + removed.city.name + W + ', sem cidades novas por visitar')
+                cost -= removed.cost # Remove the cost associated to the removed city
         return Path(path, costs[-1])
 
     # Uniform-cost search
@@ -67,12 +86,15 @@ class Map:
                 return path
             if city not in visited:
                 visited.append(city)
+            print()
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
-                    print('>> A processar ' + G + neighbor.city.name + W)
+                    if debug:
+                        print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name +
+                              W + ', o custo total é de ' + O + str(cost + neighbor.cost) + W)
                     explored_nodes.append(
                         (cost + neighbor.cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)]))
-  
+
     # Greedy search
     def get_greedy_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [], 0)]
@@ -88,15 +110,21 @@ class Map:
                 return path
             if city not in visited:
                 visited.append(city)
+            print()
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
                     cost = neighbor.city.straight_neighbor.cost
+                    if debug:
+                        print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo é de ' + O + str(neighbor.cost) + W + ' + ' + O + str(city.straight_neighbor.cost) +
+                              W + ' = ' + O + str(neighbor.cost + city.straight_neighbor.cost) + W + ' de ' + G + city.name + W + ' até ' + G + neighbor.city.straight_neighbor.city.name + W)
+                        print(
+                            "Esta formatação deve ir para o A+, o sofrega não olha para o caminho local!")
                     explored_nodes.append(
                         (cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)], total_cost + neighbor.cost))
 
     # A* search
     def get_a_star_path(self, source, destination, debug=False):
-        explored_nodes = [(0, source, [Neighbor(source, 0, source)], 0)]
+        explored_nodes = [(0, source, [], 0)]
         visited = []
 
         while explored_nodes:
@@ -109,10 +137,15 @@ class Map:
                 return path
             if city not in visited:
                 visited.append(city)
+            print()
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
-                    cost = neighbor.city.straight_neighbor.cost + neighbor.cost + path[-1].cost
-                    print(cost)
+                    if debug:
+                        print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo é de ' + O + str(neighbor.cost) + W + ' + ' + O + str(city.straight_neighbor.cost) +
+                              W + ' de ' + G + city.name + W + ' até ' + G + neighbor.city.straight_neighbor.city.name + W + ' = ' + O + str(neighbor.cost + city.straight_neighbor.cost) + W)
+                        #print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo total é de ' + O + str(cost + neighbor.cost) + W)
+                        #print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo é de ' + O + str(neighbor.cost) + W + ' + ' + O + str(cost) + W +' de ' + G + neighbor.city.straight_neighbor.city.name + W + ')')
+                    cost = neighbor.city.straight_neighbor.cost + neighbor.cost + total_cost
                     explored_nodes.append(
                         (cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)], total_cost + neighbor.cost))
 

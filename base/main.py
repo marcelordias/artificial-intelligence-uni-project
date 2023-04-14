@@ -63,9 +63,10 @@ def main():
                 if option == '1' or option == '2':
                     destination = input('Cidade de destino: ')
                     destination = portugal.get_city(destination)
+                    print('')
                     if destination == None:
                         print(
-                            '\nCidade inválida\n\nPressione ENTER para voltar ao menu de opções...')
+                            'Cidade inválida\n\nPressione ENTER para voltar ao menu de opções...')
                         input()
                         continue
                 else:
