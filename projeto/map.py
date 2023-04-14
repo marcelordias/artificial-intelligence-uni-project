@@ -124,7 +124,7 @@ class Map:
 
         while current_path: # While there are current paths to the destiny city to be explored
             current_path.sort(key=lambda x: x[0]) # Sorts the list of current paths to the destiny city by the cost of the path (ascending order)
-            cost, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
+            _, city, path_to_destiny = current_path.pop(0) # Removes the first path in the list of current paths to the destiny city and assigns the cost, city and path to the destiny city to the variables cost, city and path_to_destiny
             
             if city.name == destiny_city: # If the city is the destiny city
                 return path_to_destiny # Returns the path to the destiny city
