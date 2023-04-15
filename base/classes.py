@@ -30,7 +30,7 @@ class Map:
     def get_dfs_path(self, source, destination, debug=False):
         if debug:
             print('>> De ' + G + source.name + W + ' para ' + G + destination.name + W + ', usando o algoritmo ' + P + 'Em profundidade primeiro' + W + ', as iterações são: ')
-        path = self.recursive_get_dfs_path(source, destination, debug=True)
+        path = self.recursive_get_dfs_path(source, destination, debug=debug)
         if debug:
             path.print_path('Em profundidade primeiro')
         return path
@@ -76,21 +76,25 @@ class Map:
     def get_ucs_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [])]
         visited = []
+        iterations = 0
         while explored_nodes:
             explored_nodes.sort(key=lambda x: x[0])
             cost, city, path = explored_nodes.pop(0)
             if city == destination:
+                print('>> ' + city.name + ' ' + str(cost))
                 path = Path(path, cost)
                 if debug:
                     path.print_path('Custo uniforme')
                 return path
+            print('>> Escohido o caminho com menor custo total: ' + G + city.name + W + ':' + str(cost))
             if city not in visited:
                 visited.append(city)
-            print()
             for neighbor in city.neighbors:
+                #print("Neighbr: "+neighbor.city.name)
                 if neighbor.city not in visited:
+                    iterations += 1
                     if debug:
-                        print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name +
+                        print('\t>> ' + str("%02d" % (iterations,)) + '| De ' + G + city.name + W + ' para ' + G + neighbor.city.name +
                               W + ', o custo total é de ' + O + str(cost + neighbor.cost) + W)
                     explored_nodes.append(
                         (cost + neighbor.cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)]))

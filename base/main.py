@@ -1,9 +1,15 @@
 from setup import *
 
+# Terminal text colors
+W = '\033[0m'  # White
+R = '\033[31m'  # Red
+G = '\033[32m'  # Green
+O = '\033[33m'  # Orange
+P = '\033[35m'  # Purple
+
 # Depth-first search
-#portugal.get_dfs_path(braganca, evora, True)
-#portugal.get_dfs_path(porto, santarem, True)
-#viseu.print_neighbors()
+#portugal.get_dfs_path(castelo, portalegre, True)
+
 # Uniform-cost search
 #portugal.ucs_get_path(viseu, faro, True)
 
@@ -20,7 +26,7 @@ def menu():
         print("|{:<47}|".format("1 - Executar métodos de procura"))
         print("|{:<47}|".format("0 - Sair"))
         print("+{:-^47}+".format("+"))
-        op = input('\nOpção desejada: ')
+        op = input('\n>> Opção desejada: ')
         if op in ['1', '0']:
             print('\033c', end='')
             return op
@@ -38,7 +44,7 @@ def search_menu():
         print("|{:<47}|".format("4 - A*"))
         print("|{:<47}|".format("0 - Voltar"))
         print("+{:-^47}+".format("+"))
-        op = input('\nOpção desejada: ')
+        op = input('\n>> Opção desejada: ')
         if op in ['1', '2', '3', '4', '0']:
             print('\033c', end='')
             return op
@@ -53,25 +59,21 @@ def main():
                 option = search_menu()
                 if option == '0':
                     continue
-                source = input('Cidade de origem: ')
+                source = input('\n>> Cidade de origem: ')
                 source = portugal.get_city(source)
                 if source == None:
-                    print(
-                        '\nCidade inválida\n\nPressione ENTER para voltar ao menu de opções...')
-                    input()
+                    input('\n>> ' + R + 'Nenhuma cidade encontrada' + W + '\n\n>> Pressionar ENTER para voltar ao menu de opções...')
                     continue
                 if option == '1' or option == '2':
-                    destination = input('Cidade de destino: ')
+                    destination = input('>> Cidade de destino: ')
                     destination = portugal.get_city(destination)
                     print('')
                     if destination == None:
-                        print(
-                            'Cidade inválida\n\nPressione ENTER para voltar ao menu de opções...')
-                        input()
+                        input('>> ' + R + 'Nenhuma cidade encontrada' + W + '\n\n>> Pressionar ENTER para voltar ao menu de opções...')
                         continue
                 else:
                     destination = source.straight_neighbor.city
-                    print('\nCidade de destino é por omissão \'{}\'\n'.format(destination.name))
+                    print('\n>> Cidade de destino é por omissão \'{}\'\n'.format(destination.name))
                 if option == '1':
                     portugal.get_dfs_path(source, destination, True)
 
@@ -83,8 +85,7 @@ def main():
 
                 elif option == '4':
                     portugal.get_a_star_path(source, destination, True)
-                print('\n>> Pressionar ENTER para continuar...')
-                input()
+                input('>> Pressionar ENTER para voltar ao menu de opções...')
             elif option == '0':
                 break
             else:
