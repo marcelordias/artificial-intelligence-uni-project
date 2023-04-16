@@ -73,7 +73,7 @@ def main():
                         continue
                 else:
                     destination = source.straight_neighbor.city
-                    print('\n>> Cidade de destino é por omissão \'{}\'\n'.format(destination.name))
+                    print('>> Cidade de destino é por omissão ' + G + destination.name + W + '\n')
                 if option == '1':
                     portugal.get_dfs_path(source, destination, True)
 

@@ -77,24 +77,24 @@ class Map:
         explored_nodes = [(0, source, [])]
         visited = []
         iterations = 0
+        print('>> De ' + G + source.name + W + ' para ' + G + destination.name + W + ', usando o algoritmo ' + P + 'Custo uniforme' + W + ', as iterações são: ')
         while explored_nodes:
             explored_nodes.sort(key=lambda x: x[0])
             cost, city, path = explored_nodes.pop(0)
             if city == destination:
-                print('>> ' + city.name + ' ' + str(cost))
                 path = Path(path, cost)
                 if debug:
+                    print('\t>> O destino ' + G + city.name + W +' foi encontrado, o custo total é de ' + O + str(cost) + W)
                     path.print_path('Custo uniforme')
                 return path
-            print('>> Escohido o caminho com menor custo total: ' + G + city.name + W + ':' + str(cost))
+            print('\t>> A entrar em ' + G + city.name + W + ', o custo total é de ' + O + str(cost) + W + ':')
             if city not in visited:
                 visited.append(city)
             for neighbor in city.neighbors:
-                #print("Neighbr: "+neighbor.city.name)
                 if neighbor.city not in visited:
                     iterations += 1
                     if debug:
-                        print('\t>> ' + str("%02d" % (iterations,)) + '| De ' + G + city.name + W + ' para ' + G + neighbor.city.name +
+                        print('\t\t>> ' + str("%02d" % (iterations,)) + '. De ' + G + city.name + W + ' para ' + G + neighbor.city.name +
                               W + ', o custo total é de ' + O + str(cost + neighbor.cost) + W)
                     explored_nodes.append(
                         (cost + neighbor.cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)]))
@@ -103,7 +103,7 @@ class Map:
     def get_greedy_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [], 0)]
         visited = []
-
+        
         while explored_nodes:
             explored_nodes.sort(key=lambda x: x[0])
             cost, city, path, total_cost = explored_nodes.pop(0)
@@ -114,7 +114,7 @@ class Map:
                 return path
             if city not in visited:
                 visited.append(city)
-            print()
+            
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
                     cost = neighbor.city.straight_neighbor.cost
@@ -130,25 +130,26 @@ class Map:
     def get_a_star_path(self, source, destination, debug=False):
         explored_nodes = [(0, source, [], 0)]
         visited = []
-
+        iterations = 0
+        print('>> De ' + G + source.name + W + ' para ' + G + destination.name + W + ', usando o algoritmo ' + P + 'A*' + W + ', as iterações são: ')
         while explored_nodes:
             explored_nodes.sort(key=lambda x: x[0])
             cost, city, path, total_cost = explored_nodes.pop(0)
             if city == destination:
                 path = Path(path, total_cost)
                 if debug:
+                    print('\t>> O destino ' + G + city.name + W +' foi encontrado, o custo total é de ' + O + str(cost) + W)                    
                     path.print_path('A*')
                 return path
             if city not in visited:
                 visited.append(city)
-            print()
+            print('\t>> A entrar em ' + G + city.name + W + ', o custo total é de ' + O + str(cost) + W + ':')
             for neighbor in city.neighbors:
                 if neighbor.city not in visited:
+                    iterations += 1
                     if debug:
-                        print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo é de ' + O + str(neighbor.cost) + W + ' + ' + O + str(city.straight_neighbor.cost) +
-                              W + ' de ' + G + city.name + W + ' até ' + G + neighbor.city.straight_neighbor.city.name + W + ' = ' + O + str(neighbor.cost + city.straight_neighbor.cost) + W)
-                        #print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo total é de ' + O + str(cost + neighbor.cost) + W)
-                        #print('>> A processar de ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo é de ' + O + str(neighbor.cost) + W + ' + ' + O + str(cost) + W +' de ' + G + neighbor.city.straight_neighbor.city.name + W + ')')
+                        print('\t\t>> ' + str("%02d" % (iterations,)) + '. De ' + G + city.name + W + ' para ' + G + neighbor.city.name + W + ', o custo total é de ' + O + str(neighbor.cost + total_cost) + W + ' (+ ' + O + str(neighbor.city.straight_neighbor.cost) +
+                              W + ' de ' + G + neighbor.city.name + W + ' até ' + G + neighbor.city.straight_neighbor.city.name + W + ') = ' + O + str(neighbor.cost +total_cost + neighbor.city.straight_neighbor.cost) + W)
                     cost = neighbor.city.straight_neighbor.cost + neighbor.cost + total_cost
                     explored_nodes.append(
                         (cost, neighbor.city, path + [Neighbor(neighbor.city, neighbor.cost, city)], total_cost + neighbor.cost))
